@@ -28,10 +28,10 @@ logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # ==========================================
-# သင့် Bot Token အသစ် နဲ့ Admin ID (ဒီနေရာမှာ သင့် Token အသစ်ကို ထည့်ပါ)
+# သင့် Bot Token အသစ် နဲ့ Admin ID
 # ==========================================
-BOT_TOKEN = "ဒီနေရာမှာ_သင့်_Token_အသစ်_ထည့်ပါ"
-ADMIN_ID = "9242816269" 
+BOT_TOKEN = "8971685398:AAHDK1LGR4zKVRF7Al2JJrU30NHJQ0DUjSI"
+ADMIN_ID = "8341179314" 
 
 # ==========================================
 # သင့်ရဲ့ ပစ္စည်းစာရင်း (Menu)
@@ -165,7 +165,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
 def main() -> None:
     # Flask ကို Background မှာ Run မယ်
-    flask_thread = Thread(target=run_flask)  # <--- ဒီနေရာမှာ ပြင်ထားပါတယ်
+    flask_thread = Thread(target=run_flask)
     flask_thread.daemon = True
     flask_thread.start()
     
