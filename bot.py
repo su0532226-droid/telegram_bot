@@ -142,10 +142,8 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
             f"သင့်ရဲ့ အချက်အလက်တွေကို လက်ခံရရှိပါပြီ။ မကြာမီ ဆက်သွယ်ပေးပါမယ်။"
         )
 
-        # ၁။ Customer ဆီကို အတည်ပြုစာ ပို့ခြင်း
         await update.message.reply_text(summary, parse_mode="HTML")
 
-        # ၂။ ဆိုင်ရှင် (Admin) ဆီကို အသိပေးစာ ပို့ခြင်း
         admin_message = (
             f"🔔 <b>Order အသစ် ရောက်ပါပြီ!</b>\n\n"
             f"Customer: @{update.effective_user.username if update.effective_user.username else 'Username မရှိပါ'}\n"
@@ -164,7 +162,6 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
 
 def main() -> None:
-    # Flask ကို Background မှာ Run မယ်
     flask_thread = Thread(target=run_flask)
     flask_thread.daemon = True
     flask_thread.start()
