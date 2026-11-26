@@ -2,7 +2,7 @@ import telebot
 from telebot import types
 
 # သင့် Bot Token ကို ဒီမှာ ထည့်ပါ (မျဉ်းစောင်းတွေကို မဖျက်ပါနဲ့)
-BOT_TOKEN = '9270576168:AAECsHFTq0scRzY2cgLpmrVac0eWMwksvDA'
+BOT_TOKEN = '9137505282:AAGBgzFqOi4Z42IJSDt9WZzTSAUsmgO-3bA'
 bot = telebot.TeleBot(BOT_TOKEN)
 
 # ဆိုင်က ပစ္စည်းတွေ
