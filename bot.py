@@ -1,8 +1,12 @@
 import telebot
 from telebot import types
 
-# သင့် Bot Token ကို ဒီမှာ ထည့်ပါ (မျဉ်းစောင်းတွေကို မဖျက်ပါနဲ့)
+# သင့် Token
 BOT_TOKEN = '9137505282:AAGBgzFqOi4Z42IJSDt9WZzTSAUsmgO-3bA'
+
+# သင့် Telegram User ID
+OWNER_ID = '9242816269'
+
 bot = telebot.TeleBot(BOT_TOKEN)
 
 # ဆိုင်က ပစ္စည်းတွေ
@@ -46,23 +50,62 @@ def process_qty(message):
     uid = message.from_user.id
     user_orders[uid]['quantity'] = qty
     user_orders[uid]['total'] = user_orders[uid]['price'] * qty
-    bot.reply_to(message, f"စုစုပေါင်း {user_orders[uid]['total']} ကျပ် ဖြစ်ပါတယ်။\nကျေးဇူးပြုပြီး သင့်ရဲ့ ဖုန်းနံပါတ် ကို ရိုက်ထည့်ပါ။")
-    bot.register_next_step_handler(message, process_phone)
+    bot.reply_to(message, f"စုစုပေါင်း {user_orders[uid]['total']} ကျပ် ဖြစ်ပါတယ်။\nကျေးဇူးပြုပြီး သင့်ရဲ့ **အမည်** ကို ရိုက်ထည့်ပါ။")
+    bot.register_next_step_handler(message, process_name) # အမည် မေးတဲ့အဆင့်ကို ပြောင်းလိုက်တယ်
 
+# အမည် လက်ခံပြီး ဖုန်းနံပါတ် ဆက်မေးမယ်
+def process_name(message):
+    uid = message.from_user.id
+    if uid in user_orders:
+        user_orders[uid]['name'] = message.text
+        bot.reply_to(message, "ကျေးဇူးတင်ပါတယ်။\nကျေးဇူးပြုပြီး သင့်ရဲ့ **ဖုန်းနံပါတ်** ကို ရိုက်ထည့်ပါ။")
+        bot.register_next_step_handler(message, process_phone)
+    else:
+        bot.reply_to(message, "တစ်ခုခု မှားယွင်းသွားပါတယ်။ /start ကနေ ပြန်စပါ။")
+
+# ဖုန်းနံပါတ် လက်ခံပြီး လိပ်စာ ဆက်မေးမယ်
 def process_phone(message):
+    uid = message.from_user.id
+    if uid in user_orders:
+        user_orders[uid]['phone'] = message.text
+        bot.reply_to(message, "ကျေးဇူးတင်ပါတယ်။\nနောက်ဆုံးအနေနဲ့ ပို့ဆောင်ရမယ့် **မြို့နဲ့ ရပ်ကွက်/လိပ်စာအပြည့်အစုံ** ကို ရိုက်ထည့်ပေးပါ။")
+        bot.register_next_step_handler(message, process_address)
+    else:
+        bot.reply_to(message, "တစ်ခုခု မှားယွင်းသွားပါတယ်။ /start ကနေ ပြန်စပါ။")
+
+# လိပ်စာ လက်ခံပြီး Order အပြည့်အစုံကို ဆိုင်ပိုင်ရှင်ဆီ ပို့မယ်
+def process_address(message):
     uid = message.from_user.id
     o = user_orders.get(uid)
     if not o:
         bot.reply_to(message, "တစ်ခုခု မှားယွင်းသွားပါတယ်။ /start ကနေ ပြန်စပါ။")
         return
+    
+    o['address'] = message.text
+    
+    # ဆိုင်ပိုင်ရှင်ဆီ ပို့မယ့် စာ
     summary = (f"✅ Order အသစ်\n"
+               f"--------------------\n"
                f"ပစ္စည်း: {o['product']}\n"
                f"အရေအတွက်: {o['quantity']} ဘူး\n"
                f"စုစုပေါင်း: {o['total']} ကျပ်\n"
-               f"ဖုန်း: {message.text}\n"
+               f"--------------------\n"
+               f"အမည်: {o['name']}\n"
+               f"ဖုန်း: {o['phone']}\n"
+               f"လိပ်စာ: {o['address']}\n"
+               f"--------------------\n"
+               f"Telegram Acc Name: {message.from_user.first_name}\n"
                f"User ID: {uid}")
-    bot.reply_to(message, "ကျေးဇူးတင်ပါတယ်! သင့် order ကို လက်ခံရရှိပါပြီ။ မကြာမီ ဆက်သွယ်ပါမယ်။")
-    bot.send_message(message.chat.id, summary)
+    
+    # ဝယ်သူကို စာပြန်မယ်
+    bot.reply_to(message, "ကျေးဇူးတင်ပါတယ်! သင့် order နဲ့ လိပ်စာကို လက်ခံရရှိပါပြီ။ မကြာမီ ဆက်သွယ်ပါမယ်။")
+    
+    # ဆိုင်ပိုင်ရှင် (သင့်) ဆီကို Order ပို့မယ်
+    try:
+        bot.send_message(OWNER_ID, summary)
+    except Exception as e:
+        print(f"Owner ဆီ စာပို့လို့မရပါ: {e}")
+        
     del user_orders[uid]
 
 print("Bot running...")
