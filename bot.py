@@ -5,7 +5,7 @@ from telebot import types
 BOT_TOKEN = '9137505282:AAGBgzFqOi4Z42IJSDt9WZzTSAUsmgO-3bA'
 
 # သင့် Telegram User ID
-OWNER_ID = '9242816269'
+OWNER_ID = '8737881994'
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
